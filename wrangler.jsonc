@@ -1,0 +1,12 @@
+{
+  // Cloudflare settings: Cadence is a ready-made website, so this just serves the files.
+  // "name" must match the existing Cloudflare Worker so the web address stays the same.
+  "name": "weathered-feather-82ec",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./",
+    "not_found_handling": "single-page-application"
+  }
+}
