@@ -342,7 +342,7 @@ html[data-mode="light"] .dghost{box-shadow:0 20px 50px rgba(0,0,0,.18)}
 .exed{padding:6px 10px}
 /* upgrade 7: weekly recap */
 #rcp{position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center}#rcp[hidden]{display:none}
-.rc{position:relative;width:min(430px,100%);height:min(780px,100%);overflow:hidden;display:flex;flex-direction:column;padding:18px 24px 26px;background:radial-gradient(520px 420px at 85% 0%,var(--g1),transparent 65%),radial-gradient(520px 420px at 0% 100%,var(--g2),transparent 65%),var(--bg);border:1px solid var(--hairline);transition:background .6s;user-select:none;-webkit-user-select:none}
+.rc{cursor:pointer;position:relative;width:min(430px,100%);height:min(780px,100%);overflow:hidden;display:flex;flex-direction:column;padding:18px 24px 26px;background:radial-gradient(520px 420px at 85% 0%,var(--g1),transparent 65%),radial-gradient(520px 420px at 0% 100%,var(--g2),transparent 65%),var(--bg);border:1px solid var(--hairline);transition:background .6s;user-select:none;-webkit-user-select:none}
 .rcbars{display:flex;gap:4px;position:relative;z-index:3}.rcbars i{flex:1;height:3px;background:rgba(255,255,255,.18);position:relative;overflow:hidden}.rcbars i b{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(0)}.rcbars i.done b{transform:scaleX(1)}.rcbars i.cur b{animation:rcfill 5.5s linear forwards}
 @keyframes rcfill{to{transform:scaleX(1)}}
 .rctop{display:flex;justify-content:space-between;align-items:center;margin-top:14px;position:relative;z-index:3}.rctop .x-btn{width:34px;height:34px}.rctop .x-btn svg{width:18px;height:18px}
@@ -1157,7 +1157,11 @@ function showRecap(m0){m0=m0||lastMonday();rcWeek=m0;var st=weekStats(m0),pm=new
  storyOpen("WEEKLY RECAP",function(){shareWeek(m0)})}
 var rcShareFn=null;
 function storyOpen(label,shareFn){rcShareFn=shareFn;$("rcp").innerHTML='<div class="rc" id="rcBox"><div class="rcbars">'+rcSlides.map(function(){return'<i><b></b></i>'}).join("")+'</div><div class="rctop"><span class="brand" style="font-size:11px;letter-spacing:.35em">'+logo(false)+esc(label)+'</span><button class="x-btn" id="rcX" title="Close">'+ic("x")+'</button></div><div class="rcs" id="rcS"></div><button class="rcnav l" id="rcL" aria-label="Back"></button><button class="rcnav r" id="rcR" aria-label="Next"></button></div>';
- $("rcp").hidden=false;$("rcX").onclick=closeRecap;$("rcL").onclick=function(){rcGo(rcI-1)};$("rcR").onclick=function(){rcGo(rcI+1)};rcGo(0)}
+ $("rcp").hidden=false;$("rcX").onclick=closeRecap;$("rcL").onclick=function(e){e.stopPropagation();rcGo(rcI-1)};$("rcR").onclick=function(e){e.stopPropagation();rcGo(rcI+1)};
+ /* click anywhere to skip: left third goes back, everywhere else goes to the next part (buttons still work as normal) */
+ $("rcp").onclick=function(e){if(e.target.closest("button,a,input,select,textarea"))return;var b=$("rcBox");if(!b)return;var r=b.getBoundingClientRect(),inBox=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+  if(inBox&&e.clientX<r.left+r.width*.35)rcGo(rcI-1);else rcGo(rcI+1)};
+ rcGo(0)}
 /* ---- Cadence Wrapped: the whole school year (upgrade 11) ---- */
 var MON=["Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul"];
 function schoolYear(){var n=new Date(),y=n.getMonth()>=8?n.getFullYear():n.getFullYear()-1;return{y:y,start:new Date(y,8,1),end:new Date(y+1,7,31,23,59,59),label:y+"–"+String((y+1)%100).padStart(2,"0")}}
